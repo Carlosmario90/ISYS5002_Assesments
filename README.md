@@ -4,6 +4,7 @@
 Date: 23/05/2025
 Version: 1.0
 Author: Carlos Mario Palacios Mosquera
+Run the file " WEATHER ADVISOR APP"
 
 🧾 Overview
 This application provides weather forecasts using natural language queries. It supports multiple cities, visualizations for temperature and precipitation, and highlights conditions like rain or heat. Users can input questions like:

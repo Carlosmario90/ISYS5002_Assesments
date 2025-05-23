@@ -1,0 +1,162 @@
+EXAMPLE 1
+
+Goal: Improving Forecast Parsing for Natural Language
+
+Prompting Techniques used:
+Restate the problem, Challenge edge cases, Request improvements to handle natural variation in input
+
+>Me : "Can you update parse_weather_question so that it understands 'in 2 days', 'day after tomorrow'?"
+
+ AI Response>> 
+
+if "today" in question:
+    parsed_date = today
+elif "tomorrow" in question:
+    parsed_date = today + timedelta(days=1)
+elif "day after tomorrow" in question:
+    parsed_date = today + timedelta(days=2)
+else:
+    parsed_date = dateparser.parse(question)
+
+> Me: Follow-Up. Could you lease extend it to capture 'in 2 days', 'in 3 days' and match both English and weekday names. Also add an error if the date is more than 3 days away.
+
+AI>> A new version of your updated code
+
+if "day after tomorrow" in question:
+    parsed_date = today + timedelta(days=2)
+elif re.search(r"in\s+2\s+days", question):
+    parsed_date = today + timedelta(days=2)
+elif re.search(r"in\s+3\s+days", question):
+    parsed_date = today + timedelta(days=3)
+elif re.search(r"(monday|tuesday|wednesday|thursday|friday|saturday|sunday)", question):
+    parsed_dt = dateparser.parse(question, settings={'PREFER_DATES_FROM': 'future'})
+    parsed_date = parsed_dt.date()
+else:
+    parsed_dt = dateparser.parse(question)
+    if not parsed_dt:
+        return {"error": "Sorry, I couldn't understand the date."}
+    parsed_date = parsed_dt.date()
+
+forecast_day = (parsed_date - today).days
+if forecast_day > 2:
+    return {"error": "Only up to 3 days of forecast are supported."}
+
+
+
+EXAMPLE 2 
+
+Goal: Fixing Incorrect Temperature Plotting 
+
+Prompting techniques used: Challenge edge cases
+
+This example indicates a problem while plotting the avg, min and max temperature
+
+Me>>>  Why is the min temperature greater than the max on the plot?"
+
+AI>> That might happen if the values from the weather API are being interpreted incorrectly. Check if you're converting the temperature fields to float correctly in your plotting function.
+
+Me>> I checked the information and the temperature data shown in the table is correct, so the issue must be with how the chart is being plotted."
+
+AI >> You're right. Let me give and updated version of your code.
+
+🔸 Before: Initial Plotting Code (Buggy)
+
+def plot_temperature_chart(data):
+    df = pd.DataFrame(data)
+    fig, ax = plt.subplots()
+    ax.plot(df["date"], df["max_temp_C"], label="Max Temp (°C)", marker="o")
+    ax.plot(df["date"], df["min_temp_C"], label="Min Temp (°C)", marker="o")
+    ax.plot(df["date"], df["avg_temp_C"], label="Avg Temp (°C)", marker="o")
+    ax.set_title("Daily Temperature Forecast")
+    ax.set_ylabel("°C")
+    ax.set_xlabel("Date")
+    plt.xticks(rotation=45)
+    ax.legend()
+    plt.tight_layout()
+    plt.show()
+
+AI>>> Even though the DataFrame showed correct temperature values, the plot sometimes displayed the min temperature above the max, likely because the values were being read as strings, not floats.
+
+🔹 After: Improved Plotting Code (with Fix)
+
+def plot_temperature_chart(data):
+    df = pd.DataFrame(data)
+    
+    # ✅ Fix: Ensure proper data types
+    df["max_temp_C"] = df["max_temp_C"].astype(float)
+    df["min_temp_C"] = df["min_temp_C"].astype(float)
+    df["avg_temp_C"] = df["avg_temp_C"].astype(float)
+
+    df = df.sort_values("date")  # optional but helpful
+
+    fig, ax = plt.subplots()
+    ax.plot(df["date"], df["max_temp_C"], label="Max Temp (°C)", marker="o")
+    ax.plot(df["date"], df["min_temp_C"], label="Min Temp (°C)", marker="o")
+    ax.plot(df["date"], df["avg_temp_C"], label="Avg Temp (°C)", marker="o")
+    ax.set_title("🌡️ Daily Temperature Forecast")
+    ax.set_ylabel("°C")
+    ax.set_xlabel("Date")
+    plt.xticks(rotation=45)
+    ax.legend()
+    plt.tight_layout()
+    plt.show()
+
+AI>> After prompting about the inconsistency, the float conversion was added to correct data type interpretation. This ensured numeric sorting on the plot and resolved the issue. You questioned an inconsistency between visual and tabular data, guided the fix by targeting how the data was being processed, and verified through visual feedback. This shows excellent use of debugging and validation techniques.
+
+Me>> Thanks!
+
+EXAMPLE 3.
+
+Goal: Understanding a section of he code
+
+Prompting technique used: Ask for code explanations
+
+Me>> What does this part of the code does? 
+
+    if location:
+        for word in date_keywords:
+            if word in location:
+                location = location.replace(word, '')
+        location = location.strip()
+
+AI>> Great question! Let's break down what this part of the code does:
+
+✅ Code Breakdown:
+
+if location:
+    for word in date_keywords:
+        if word in location:
+            location = location.replace(word, '')
+    location = location.strip()
+if location:
+→ Make sure we actually extracted something.
+
+for word in date_keywords:
+→ Go through a list of known date-related words like "today", "tomorrow", "monday", "next"...
+
+if word in location:
+→ Check if that word is in the extracted location.
+
+location = location.replace(word, '')
+→ Remove it from the string.
+
+location = location.strip()
+→ Remove any leftover leading/trailing whitespace.
+
+AI>> Example:
+
+Original: "paris today"
+After removing "today": "paris"
+After strip(): "paris"
+
+Me>>  Why is this necessary?
+
+AI>> Because users often write things like:
+
+"in Lima tomorrow"
+
+"at Tokyo next Tuesday"
+
+...and your regex captures the city + date together.
+
+This code makes sure we pass just the clean city name to the weather API

@@ -1,0 +1,128 @@
+User:
+I want to build a weather app that can answer natural questions like “Will it rain in Tokyo tomorrow?” and give a smart response using weather data from an API. I also want it to have a nice user interface and show charts for temperature and rainfall.
+
+AI>>>> Absolutely! That’s a great strategy. Would you like me to break it down into sections like:
+
+Understanding user questions (parsing),
+
+Getting weather data,
+
+Generating natural language answers,
+
+Visualising the weather,
+
+And designing the user interface?
+
+ME>>: That's exactly what I think I need. 
+
+AI>>  Let’s write pseudocode for each of those sections. You’ll be able to implement them one by one afterward with more confidence.
+
+AI>>  Let’s begin with the function that processes the question from the user.
+
+Pseudocode for parse_weather_question()
+
+Function parse_weather_question(question):
+    - Convert to lowercase and strip spaces
+    - Check if question includes date expressions:
+        - e.g., today, tomorrow, in 2 days, Friday
+        - If weekday mentioned, convert to a proper date
+    - Calculate number of forecast days from today
+    - Extract city name using regex
+    - Clean city name by removing date words
+    - Detect optional weather terms like 'rain', 'hot', 'cold'
+    - Return a dictionary with location, forecast_day, and attribute
+
+ME>>  how do I make sure it works with phrases like “in 2 days” or “next Tuesday”?
+
+AI>>Great question! We’ll explicitly match those phrases with regex. Then we’ll use a date parser to resolve them into actual dates. That way, we don’t miss those natural-sounding patterns.
+
+ME>> What about dates in the past such yesterday? Will it gives an error if the date is in the past?
+
+AI>>>Exactly the pseudocode will also return an error message if the question asks about a date earlier than today.
+
+ME>> What other components does the pseudocode has?
+
+AI>> The next step is to plan how to get the weather info. Here’s the pseudocode for that part:
+
+Function get_weather_data(location, forecast_days):
+    - Make a request to wttr.in using the location
+    - Get weather data in JSON format
+    - Extract current conditions:
+        - Temperature, humidity, wind speed
+    - Extract forecast data:
+        - For each day, get max/min/avg temp, condition, rain, sunrise/sunset
+    - Return a structured dictionary with current_conditions and forecast
+
+
+ME>> Could you please remind me what’s JSON again?
+
+AI>>> JSON stands for JavaScript Object Notation. It’s a way of formatting data like this:
+
+{
+  "temperature": 22,
+  "humidity": 78
+}
+
+It’s super common for APIs like wttr.in. And it’s very easy to work with in Python using .get() and .json() methods.
+
+Me>>> Got it. So I don’t need to worry about converting things since it comes formatted?
+
+AI>>> Exactly. The API sends back a JSON object, and you just extract what you need.
+
+Me >> What's the next step?
+
+AI> The next step is generating the response.  Here's the pseudocode for generate_weather_response:
+
+Function generate_weather_response(parsed, data):
+    - If parsed contains an error → return that error message
+    - If forecast_day == 0:
+        - Use current conditions to build a sentence
+    - Else:
+        - Use forecast data for that day
+    - If user asked about rain/hot/cold:
+        - Add extra interpretation:
+            - Will it rain? Is it cold? etc.
+    - Return the final response as a string
+
+ME>>>  what happened if the attribute is not in the question?
+
+AI>>  Then it just skips the interpretation part and only returns the weather facts.
+
+So it’s like: "Tomorrow in Perth it’ll be sunny with 23°C"?
+
+AI>>> and if the user asks, “Will it rain?”, it checks precipMM and says, “Yes, rain is expected,” or “No, it's expected to stay dry.”
+
+Me>>  I also want to show some charts, one forecasting the temperature and another for the precipitation
+
+AI>> Awesome! Visuals are really useful. Here’s the pseudocode:
+
+Function create_temperature_visualisation(weather_data):
+    - Extract daily temperature values
+    - Plot max, min, and average as line graph
+    - Add title, labels, legend
+
+Function create_precipitation_visualisation(weather_data):
+    - Extract daily precipitation values
+    - Plot as bar chart
+    - Add title and labels
+
+ME>>> Lately, I need user interfase what implement an intuitive menu system using pyinputplus, clear instructions and error handling
+and provide a clean, organised display of information on Google Colab.
+
+AI>>> Great! Pseudocode for interactive_multi_day_city_weather_ui. Let’s map out how the user interface should work:
+
+Function interactive_ui():
+    - Display instructions to the user
+    - Create input box for questions
+    - On submit:
+        - Parse the question
+        - If error → show it
+        - Else:
+            - Get weather data
+            - Show the response (text)
+            - Show forecast table
+            - Plot charts
+            - Ask if user wants to add another city
+    - If "Add another city":
+        - Repeat same process
+    - Button to clear everything and reset the UI

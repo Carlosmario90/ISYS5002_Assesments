@@ -1,0 +1,91 @@
+BEFORE IMPLEMENTING THE CODE 
+
+Question. >>> Which are the advantages and disadvantages of the following data sources for implementing the weather application?  Foundation Option (weatherwrapper), Standard Option (wttr.in API) and Extension Option (Openweathermap, etc). Could you provide a comparative table?
+
+AI>>> Here's a comparative table summarising the advantages and disadvantages of the three weather data source options (Foundation, Standard, and Extension) for your application:
+
+==========================================================================================
+| Criteria                          | Foundation Option          | Standard Option           | Extension Option           |
+|                                   | (WeatherWrapper Module)    | (wttr.in API)             | (OpenWeatherMap, etc.)     |
+==========================================================================================
+| Ease of Use                       | ✅ Very easy                | ⚠️ Moderate                | ❌ Complex – setup needed   |
+| Learning Opportunity              | ⚠️ Limited abstraction      | ✅ Good API practice       | ✅✅ Deep API integration     |
+| Customisation / Flexibility       | ❌ Low                      | ✅ Medium                  | ✅✅ High                    |
+| Data Richness                     | ⚠️ Basic info               | ✅ Standard forecast       | ✅✅ Extensive data          |
+| Error Handling Control            | ✅ Built-in                 | ⚠️ Manual                  | ✅ Full control             |
+| Setup Time                        | ⏱️ Very fast                | ⏱️ Moderate                | ⏱️⏱️ Slower (API setup)     |
+| API Key Required                  | ❌ No                       | ❌ No                      | ✅ Yes                      |
+| Marks Eligibility (Baseline)     | ✅ Yes                      | ✅ Yes                     | ✅ Yes + bonus              |
+| Eligible for Bonus Marks         | ❌ No                       | ⚠️ Possible                | ✅ Yes                      |
+| Best Use Case                    | Beginners or fast setup     | Intermediate customization | Advanced full-featured app |
+==========================================================================================
+
+Question >>>. Can you please give me a summary and define what each one means?
+
+AI >>>. Here’s a summary and definition of each weather data source option for implementing your weather application, including what it means, plus key advantages and disadvantages:
+
+🌱 1. Foundation Option — Using the Provided WeatherWrapper Module
+What it means:
+
+You rely on a prebuilt Python module (WeatherWrapper) that wraps around a weather API (like wttr.in) and simplifies how you fetch and handle weather data.
+
+🧩 2. Standard Option — Directly Using the wttr.in API
+What it means:
+
+You query the API yourself (https://wttr.in/{city}?format=j1), and write Python code to request, receive, and process the JSON response manually
+
+🚀 3. Extension Option — Using an Advanced API like OpenWeatherMap
+What it means:
+
+You integrate a full-featured weather API like OpenWeatherMap, requiring an API key, headers, and requests. You handle rate limits and secure credentials.
+
+
+Question>>> How can I query an API (https://wttr.in/{city}?format=j1 on phyton?. Could you please provide an example?
+
+AII>>✅ Basic Python Example to Query wttr.in
+
+def get_wttr_weather(city):
+    url = f"https://wttr.in/{city}?format=j1"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Raises error for bad responses (e.g. 404)
+        data = response.json()
+        return data
+    except requests.exceptions.RequestException as e:
+        print(f"⚠️ Error fetching weather data: {e}")
+        return None
+
+# Example usage
+city_name = "Bogota"
+weather_data = get_wttr_weather(city_name)
+
+if weather_data:
+    current = weather_data['current_condition'][0]
+    print(f"🌡️ Temperature in {city_name}: {current['temp_C']}°C")
+    print(f"🌧️ Condition: {current['weatherDesc'][0]['value']}")
+    print(f"💨 Wind: {current['windspeedKmph']} km/h")
+    print(f"💧 Humidity: {current['humidity']}%")
+
+
+
+AFTER IMPLEMENTING THE CODE 
+
+Question>>>. Does my code satisfy the “Standard Option” of data sources? 
+
+AI>>> ✅ Yes, your current implementation fully satisfies the “Standard Option” 
+
+Question >>>. How is it satisfying the standard option?
+
+AI>>> Here's how it matches the Standard Option criteria: 
+
+✅ STANDARD OPTION: USE THE WTTR.IN SERVICE API DIRECTLY
+===============================================================
+
+Requirement from brief                             | Your implementation
+---------------------------------------------------|---------------------------------------------------------------
+Uses wttr.in API                                   | ✅ Yes, through fetch_my_weather.get_weather(location, format="raw_json"), which wraps https://wttr.in/...format=j1
+Returns JSON weather data                          | ✅ get_weather_data() parses and processes the raw JSON format
+Requires your own request handling and processing  | ✅ You manually extract current + forecast data, handle JSON structure
+Shows understanding of API interaction             | ✅ You manage response logic, fallback handling ([{}]), and structure
+Allows customisation                               | ✅ You format forecast, slice days, and compute values like precipitation
+

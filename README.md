@@ -4,7 +4,9 @@
 Date: 23/05/2025
 Version: 1.0
 Author: Carlos Mario Palacios Mosquera
-Run the file " WEATHER ADVISOR APP"
+
+NOTE:  Earlier commits were made to a previous version of the notebook. " Assessment_Weather_App_Final_ipynb.ipynb" which is part of the REPO.
+Please refer to the file `` for the ** WEATHER ADVISOR APP"* of the project. This final version includes the complete interactive weather dashboard, updated data source, and all functionality described in the submission requirements.
 
 🧾 Overview
 This application provides weather forecasts using natural language queries. It supports multiple cities, visualizations for temperature and precipitation, and highlights conditions like rain or heat. Users can input questions like:
